@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon index.js"
   },
   "repository": {
     "type": "git",
@@ -15,5 +16,16 @@
   "bugs": {
     "url": "https://github.com/zain-faruqi/musaic/issues"
   },
-  "homepage": "https://github.com/zain-faruqi/musaic#readme"
+  "homepage": "https://github.com/zain-faruqi/musaic#readme",
+  "dependencies": {
+    "connect-mongodb-session": "^3.1.1",
+    "cors": "^2.8.5",
+    "dotenv": "^16.1.4",
+    "express": "^4.18.2",
+    "express-session": "^1.17.3",
+    "mongoose": "^7.2.4",
+    "nodemon": "^2.0.22",
+    "path": "^0.12.7",
+    "spotify-web-api-node": "^5.0.2"
+  }
 }
