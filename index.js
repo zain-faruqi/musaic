@@ -102,8 +102,8 @@ app.get('/callback', (req, res) => {
             };
             
     	   
-            // console.log('user:', req.session.user);
-            res.redirect("http://localhost:3000/profile");
+            //console.log('user:', req.session.user);
+            res.redirect("http://localhost:3000/");
         })
 });
 

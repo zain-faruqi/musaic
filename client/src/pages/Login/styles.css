@@ -1,0 +1,49 @@
+body{
+    background-color: black;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.login-container{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.login-button{
+    border: solid 1px white;
+    border-radius: 5px;
+    background-color: black;
+    color: white;
+    padding: 10px;
+    margin: 10px;
+    cursor: pointer;
+    font-size: small;
+}
+
+.login-button:hover{
+    background-color: white;
+    color: black;
+}
+
+.square{
+    height: 80%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 80%;
+    border: solid 1px white;
+}
+
+.container{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 99vw;
+    height: 99vh;
+}
+
