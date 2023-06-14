@@ -31,10 +31,7 @@ app.use(session({
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(cors({
-    origin: 'http://localhost:3000/',
-    credentials: true
-}));
+app.use(cors({ origin: 'http://localhost:3000', credentials: true }));
 
 const spotifyApi = new SpotifyWebApi({
   clientId: process.env.CLIENT_ID,
@@ -61,6 +58,9 @@ const scopes = [
     'user-follow-read',
     'user-follow-modify'
 ];
+
+const spotifyRoutes = require('./routes/spotifyCalls')(spotifyApi);
+app.use('/spotify', spotifyRoutes);
 
 app.get('/', (req, res) => {
     if (req.session.user) {
@@ -101,11 +101,17 @@ app.get('/callback', (req, res) => {
                 refresh_token: refresh_token
             };
             
-    	   
-            //console.log('user:', req.session.user);
-            res.redirect("http://localhost:3000/");
+    	   req.session.save(err => {
+            if (err) {
+                console.error(err);
+            } else {
+                console.log(req.session.user);
+                res.redirect("http://localhost:3000/home");
+            }
+        });
         })
 });
+
 
 if (process.env.NODE_ENV == 'production') {
     console.log(__dirname);
