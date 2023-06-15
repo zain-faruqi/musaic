@@ -1,6 +1,7 @@
 import React from 'react'
 import { useState, useEffect } from 'react'
 import SpotifyPlayer from 'react-spotify-web-playback'
+import './styles.css'
 
 export default function PersistantPlayer() {
 
@@ -23,20 +24,22 @@ export default function PersistantPlayer() {
         return <div>loading...</div>
     } else {
         return (
-            <SpotifyPlayer
-                token={token}
-                showSaveIcon
-                uris={playQueue}
-                styles={{
-                    activeColor: '#fff',
-                    bgColor: 'black',
-                    color: '#fff',
-                    loaderColor: '#fff',
-                    sliderColor: '#1cb954',
-                    trackArtistColor: '#ccc',
-                    trackNameColor: '#fff',
-                }}
-            />
+            <div className='player-container'>
+                <SpotifyPlayer
+                    token={token}
+                    showSaveIcon
+                    uris={playQueue}
+                    styles={{
+                        activeColor: '#fff',
+                        bgColor: 'black',
+                        color: '#fff',
+                        loaderColor: '#fff',
+                        sliderColor: '#1cb954',
+                        trackArtistColor: '#ccc',
+                        trackNameColor: '#fff',
+                    }}
+                />
+            </div>
         )
     }
 }

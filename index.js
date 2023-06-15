@@ -62,11 +62,30 @@ const scopes = [
 const spotifyRoutes = require('./routes/spotifyCalls')(spotifyApi);
 app.use('/spotify', spotifyRoutes);
 
+
 app.get('/', (req, res) => {
     if (req.session.user) {
-        res.redirect('http://localhost:3000/home'); // redirect to home only if the user has logged in
-    }
-    else {
+        const refresh_token = req.session.user.refresh_token;
+        spotifyApi.setRefreshToken(refresh_token);
+
+        spotifyApi
+            .refreshAccessToken()
+            .then(data => {
+                req.session.user.access_token = data.body['access_token'];
+                req.session.save(err => {
+                    if (err) {
+                        console.error(err);
+                    } else {
+                        console.log(req.session.user);
+                    }
+                })   
+            })
+            .catch(err => {
+                console.log('Could not refresh access token', err);
+            });
+        // redirect to home only if the user has logged in
+        res.redirect('http://localhost:3000/home');
+    } else {
         res.redirect('http://localhost:3000/login'); // if not, redirect to login page
     }
 });
@@ -110,6 +129,23 @@ app.get('/callback', (req, res) => {
             }
         });
         })
+});
+
+app.get('/refresh_token', (req, res) => {
+    const refresh_token = req.session.user.refresh_token;
+    spotifyApi.setRefreshToken(refresh_token);
+
+    spotifyApi
+        .refreshAccessToken()
+        .then(data => {
+            res.send({
+                'access_token': data.body['access_token'],
+                'expires_in': data.body['expires_in']
+            });
+        })
+        .catch(err => {
+            console.log('Could not refresh access token', err);
+        });
 });
 
 
