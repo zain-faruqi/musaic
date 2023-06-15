@@ -1,0 +1,45 @@
+.component-container{
+    width: 80%;
+}
+
+.shelf-container{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+   
+}
+
+.test-image{
+    border: 1px solid white;
+    width: 75px;
+    height: 75px;
+}
+
+.shelf-items{
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+hr{
+    width: 100%;
+    border: 1px solid white;
+    margin-bottom: 3vh;
+}
+
+.shelf-title{
+    font-size: 20px;
+    margin-bottom: 1vh;
+}
+
+.shelf-item-name{
+    font-size: .9em;
+}
+
+.shelf-item-subname{
+    font-size: .7em;
+    color: gray;
+}
+
+
