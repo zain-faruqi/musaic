@@ -7,7 +7,6 @@ body {
 }
 
 .children{
-    border: solid 1px white;
     width: 100%;
     display: flex;
     flex-direction: column;

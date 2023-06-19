@@ -17,9 +17,17 @@
     height: 75px;
 }
 
+.shelf-item-image{
+    border: 1px solid white;
+    width: 75px;
+    height: 75px;
+}
+
 .shelf-items{
-    margin-left: 5px;
-    margin-right: 5px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    width: 100%;
 }
 
 hr{
@@ -34,12 +42,16 @@ hr{
 }
 
 .shelf-item-name{
-    font-size: .9em;
+    text-align: center;
+    font-size: .7em;
 }
 
 .shelf-item-subname{
-    font-size: .7em;
+    text-align: center;
+    font-size: .5em;
     color: gray;
 }
 
-
+.shelf-item:hover{
+    cursor: pointer;
+}

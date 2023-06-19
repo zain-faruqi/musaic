@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react'
 import SpotifyPlayer from 'react-spotify-web-playback'
 import './styles.css'
 
-export default function PersistantPlayer() {
+export default function PersistantPlayer(props) {
 
     const [token, setToken] = useState(false);
     const [playQueue, setPlayQueue] = useState(['spotify:playlist:2FpPZu6woUabeVYV5Gscmi']);
@@ -19,6 +19,12 @@ export default function PersistantPlayer() {
                 console.log(err);
             });
     }, [])
+
+    useEffect(() => {
+  if(props.playUri){
+    setPlayQueue([props.playUri]);
+  }
+}, [props.playUri])
 
     if (!token) {
         return <div>loading...</div>

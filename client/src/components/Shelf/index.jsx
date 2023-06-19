@@ -45,21 +45,23 @@ export default function Shelf(props) {
         )
     } else {
         return (
-            <div>
+            <div className='component-container'>
+                <div className='shelf-title'>/ {props.title}</div>
                 <div className='shelf-container'>
-                    <div className='shelf-title'>{props.title}</div>
                     <div className='shelf-items'>
                         {props.items.map((item, index) => {
                             return (
-                                <div className='shelf-item' key={index}>
+                                <div className='shelf-item' key={index} onClick={() => props.onItemClick(item.uri)}>
                                     <div className='shelf-item-name'>{item.name}</div>
-                                    {/*if album else if playlist */}
-                                    <img src={item.images[0].url} alt={item.name} />
+                                    <div className='shelf-item-subname'>{item.owner}</div>
+                                    <img className='shelf-item-image' src={item.img} alt='playlist cover' />
                                 </div>
                             )
                         })}
                     </div>
+
                 </div>
+                <hr/>
             </div>
         )
     }
