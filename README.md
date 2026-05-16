@@ -27,6 +27,8 @@ evs-vmp reauth           # creates / signs into your castlabs account
 
 If you previously installed via `pip3 install --user castlabs-evs` that also works — the signing hook falls back to `python3 -m castlabs_evs.vmp`.
 
+see more [castlabs-setup.md](https://github.com/zain-faruqi/musaic/blob/main/docs/castlabs-setup.md)
+
 ## 2. Spotify Developer app
 
 1. Go to <https://developer.spotify.com/dashboard> → **Create app**
