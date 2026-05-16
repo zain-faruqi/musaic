@@ -102,3 +102,61 @@ The packaged-build database lives at `~/Library/Application Support/Musaic/`, se
 - `~/Music/Musaic/` — local-file library. Drop files here to add them; an in-app watcher picks them up automatically.
 - `~/Library/Application Support/Musaic/` — packaged-build SQLite database and encrypted Spotify token store.
 - `~/Library/Caches/electron/` — cached Electron framework download (reused across packages).
+
+---
+ 
+## User guide
+ 
+### Connecting Spotify
+ 
+The **Connect Spotify** pill lives in the top bar (right side). Click it, a browser window opens to Spotify's consent screen, approve, and the browser tab will show "you can close this window". Back in Musaic the pill will read `Spotify — <your email>` with a `Disconnect` action next to it. The token is stored encrypted in the macOS Keychain, so you only do this once.
+ 
+If you ever need to switch Spotify accounts, click **Disconnect**, then **Connect Spotify** again with the other account.
+ 
+### Adding music
+ 
+Three ways, depending on source. They all land in the same `/ Recently Added` row on the home page.
+ 
+**Local files** — two paths:
+ 
+- Drop the file(s) into `~/Music/Musaic/` via Finder. A watcher in the app picks them up within a second or two. Subfolders are walked recursively.
+- Click the **open file** pill on the home page, pick a file from anywhere on disk. The file is *copied* into `~/Music/Musaic/` (not just referenced), so you can move the original afterward without breaking anything.
+Supported formats: `.mp3`, `.m4a`, `.aac`, `.flac`, `.wav`, `.ogg`, `.opus`. Metadata (title, artist, album art) comes from the file's embedded tags.
+ 
+**YouTube** — paste a YouTube URL into the input pill labeled `paste a YouTube URL`, press Enter (or click `add`). The video gets saved as a tile in `/ Recently Added`. Some videos are rights-restricted and can't be embedded — those still save but show a warning; clicking them will surface that at play-time. No API key needed.
+ 
+**Spotify** — paste a Spotify URL into the input pill labeled `paste a Spotify URL`, press Enter. Accepts:
+ 
+- **Track URLs** → saves one tile
+- **Playlist URLs** → imports every playable track in the playlist (paginated; up to 10,000)
+- **Album URLs** → imports every track on the album
+The library populates incrementally as pages come in, so for big playlists you'll see tiles appearing while the import is still running. Status reads `imported N tracks` when done. Requires Spotify to be connected first; if it isn't, the input will tell you so.
+ 
+### Playing music
+ 
+Click any tile to start playing it. The full row of tiles becomes the queue, with your clicked tile as the cursor — so clicking the third tile of a playlist plays from track 3, with tracks 4+ queued behind it.
+ 
+The bar at the bottom of the window has:
+ 
+- **Transport controls** (centered) — previous, play/pause, next
+- **Scrubber** (under the controls) — click or drag to seek
+- **Position readouts** (left and right of the scrubber) — current time / total time
+- **Track info** (left side) — title, artist, source badge
+- **Video panel** (toggles open for YouTube tracks) — the embedded player
+Once any track has played at least once after launch, the OS-level controls light up: media keys (F7/F8/F9 or the function-row equivalents), AirPods double-tap and force-touch, the Control Center widget, the lock screen controls, and Bluetooth remotes — they all drive Musaic. This is the same "needs an active media session" behavior Spotify and Apple Music have; first launch needs one manual play to wake it up.
+ 
+### Playlists
+ 
+Click **+ New playlist** in the `/ Playlists` row header. A text input slides in — type the name, Enter to create, Escape to cancel. The playlist appears as a new tile in the row.
+ 
+Click a playlist tile to open its detail page. From there:
+ 
+- **Rename** — click the playlist name in the header. It becomes editable; Enter to save, Escape to cancel.
+- **Add tracks** — click `+ Add tracks` in the header. A picker page opens with a grid of every track in your library (tracks already in the playlist are filtered out). Check the ones you want, click the sticky footer pill at the bottom to confirm. You can multi-select across local, YouTube, and Spotify tracks freely; they'll play back through their respective adapters automatically.
+- **Remove a track** — hover any track tile; an `×` button appears. Click it; the button changes to confirm. Click again within 3 seconds to actually remove, or click anywhere else to cancel.
+- **Delete the playlist** — `delete playlist` button in the header. Same 3-second confirm pattern as the per-track remove. Deletion removes the playlist row and its track memberships, but never the underlying tracks — those stay in your library.
+Click any track tile inside a playlist to play from there, with the rest of the playlist queued behind it.
+ 
+### Now Playing on the desktop
+ 
+While Musaic is playing, the current track is published to macOS's Now Playing surface — Control Center widget, lock screen, AirPods controls. Title, artist, and album art come through; play/pause/next/prev/seek all work from those surfaces and drive Musaic's queue, including cross-source (a Spotify track can be queued after a local file, etc.).
