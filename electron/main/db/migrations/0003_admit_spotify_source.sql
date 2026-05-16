@@ -1,0 +1,23 @@
+-- Admit 'spotify' as a valid `source` value in the `tracks` table.
+--
+-- The schema does not enforce the `source` enum at the SQL layer —
+-- there is no CHECK constraint. The enum lives in the Zod schema
+-- (electron/main/db/schema.ts trackRowSchema; electron/ipc/channels.ts
+-- LibraryTrack and contracts.ts libraryTrackSchema). That's where the
+-- widening actually happens.
+--
+-- This file is a marker migration: it bumps `user_version` from 2 to 3
+-- so the Zod widening can be detected via DB version even though no
+-- DDL changes. Future migrations can assume that if user_version >= 3
+-- then the Zod widening is in effect.
+--
+-- Why a no-op DDL file instead of just bumping user_version inline:
+-- the migration runner discovers files via glob and rejects gaps in
+-- the version sequence. The numbered file is what makes 3 visible to
+-- the runner; the file's body documents the widening for future
+-- readers reviewing the migrations directory in isolation.
+
+-- SQLite requires at least one statement; this is a benign self-set
+-- of the user_version, which the runner then re-sets to the migration
+-- version anyway. Two-statement file would also work; this is one.
+PRAGMA user_version = 3;

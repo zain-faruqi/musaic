@@ -1,0 +1,385 @@
+/*
+ * PlaylistDetailPage layout.
+ *
+ *   - Header row: back button, name (click-to-rename), Add-tracks +
+ *     delete pills on the right.
+ *   - Horizontal rule separator (matches HomePage section dividers).
+ *   - Body: either a tile row of tracks, or an empty-state with a
+ *     prominent "+ Add tracks" affordance.
+ *
+ * Stroke-only, monochrome, same token vocabulary as HomePage.
+ */
+
+.page {
+  padding-block: var(--space-4);
+  padding-inline: var(--space-4);
+}
+
+.headerRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
+.headerActions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-inline-start: auto;
+}
+
+.backButton {
+  border: var(--stroke);
+  border-radius: var(--radius-pill);
+  padding: var(--space-1) var(--space-3);
+  background: transparent;
+  color: var(--fg);
+  font-family: var(--font-sans);
+  font-size: var(--font-size-xs);
+  letter-spacing: 0.05em;
+  cursor: pointer;
+}
+
+.backButton:hover {
+  color: var(--fg-muted);
+  border-color: var(--fg-muted);
+}
+
+.titleButton {
+  margin: 0;
+  padding: 0;
+  background: transparent;
+  border: none;
+  color: var(--fg);
+  font-family: var(--font-sans);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  text-align: start;
+}
+
+.titleButton:hover {
+  color: var(--fg-muted);
+}
+
+.titleEditWrap {
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--space-2);
+}
+
+.titleInput {
+  border: var(--stroke);
+  border-radius: var(--radius-pill);
+  padding: var(--space-1) var(--space-3);
+  background: transparent;
+  color: var(--fg);
+  font-family: var(--font-sans);
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: 0.02em;
+  inline-size: 280px;
+  outline: none;
+}
+
+.titleInputError {
+  border-color: var(--fg-muted);
+}
+
+.titleError {
+  font-size: var(--font-size-xs);
+  color: var(--fg-muted);
+  letter-spacing: 0.05em;
+}
+
+.addButton,
+.deleteButton {
+  border: var(--stroke);
+  border-radius: var(--radius-pill);
+  padding: var(--space-1) var(--space-3);
+  background: transparent;
+  color: var(--fg);
+  font-family: var(--font-sans);
+  font-size: var(--font-size-xs);
+  letter-spacing: 0.05em;
+  cursor: pointer;
+}
+
+.addButton:hover,
+.deleteButton:hover {
+  color: var(--fg-muted);
+  border-color: var(--fg-muted);
+}
+
+.deleteButtonConfirming {
+  /* Use the subtle gray for the "are you sure?" state so the
+     palette stays monochrome but the visual change is unmissable. */
+  color: var(--fg-subtle);
+  border-color: var(--fg-subtle);
+}
+
+.rule {
+  border: none;
+  border-block-start: var(--stroke);
+  margin-block-start: var(--space-3);
+  margin-block-end: var(--space-3);
+}
+
+.helper {
+  font-family: var(--font-sans);
+  font-size: var(--font-size-sm);
+  color: var(--fg-muted);
+  letter-spacing: 0.05em;
+  margin: 0;
+}
+
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-3);
+  padding-block: var(--space-4);
+}
+
+.emptyAddButton {
+  border: var(--stroke);
+  border-radius: var(--radius-pill);
+  padding: var(--space-2) var(--space-4);
+  background: transparent;
+  color: var(--fg);
+  font-family: var(--font-sans);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: 0.05em;
+  cursor: pointer;
+}
+
+.emptyAddButton:hover {
+  color: var(--fg-muted);
+  border-color: var(--fg-muted);
+}
+
+.row {
+  display: flex;
+  gap: var(--space-3);
+  overflow-x: auto;
+  scroll-snap-type: inline mandatory;
+  padding-block-end: var(--space-2);
+}
+
+.row::-webkit-scrollbar {
+  display: none;
+}
+
+/*
+ * Track tile in playlist body.
+ *
+ * Layout: wrapper `.trackCard` is `position: relative` so the absolutely-
+ * positioned × can anchor to the corner of the artwork without disturbing
+ * the meta line below.
+ *
+ * The card has TWO buttons — the body (play) and the remove × — rather
+ * than one with a nested affordance. This keeps each button focusable
+ * and the click target unambiguous; the × button calls
+ * `event.stopPropagation` in JS so the body's onClick doesn't also fire.
+ */
+.trackCard {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  flex-shrink: 0;
+  inline-size: 160px;
+  scroll-snap-align: start;
+}
+
+.trackBody {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  background: transparent;
+  border: none;
+  padding: 0;
+  text-align: start;
+  color: var(--fg);
+  cursor: pointer;
+  font-family: var(--font-sans);
+  min-inline-size: 0;
+}
+
+.trackBody:hover {
+  color: var(--fg-muted);
+}
+
+.trackBody:focus-visible {
+  outline: var(--stroke);
+  outline-offset: var(--space-1);
+}
+
+.tileArt {
+  display: inline-block;
+  inline-size: 160px;
+  block-size: 160px;
+}
+
+.trackMeta {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-inline-size: 0;
+  inline-size: 100%;
+}
+
+.trackTitle {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  color: inherit;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.trackSubtitle {
+  font-size: var(--font-size-xs);
+  color: var(--fg-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/*
+ * Remove × button — anchored to the top-right of the artwork. Hidden
+ * at rest (opacity 0), revealed on tile hover. In confirm state, the
+ * × button is forced visible and widened to accommodate the "remove?"
+ * label. The label is more discoverable than asking the user to
+ * intuit "the X means remove and another click confirms".
+ *
+ * Keyboard-accessible: the button is focusable, so tab-then-Enter
+ * triggers the confirm flow without the hover state.
+ */
+.removeButton {
+  position: absolute;
+  inset-block-start: var(--space-2);
+  inset-inline-end: var(--space-2);
+  min-inline-size: 24px;
+  block-size: 24px;
+  padding-inline: var(--space-2);
+  border: var(--stroke);
+  border-radius: var(--radius-pill);
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-sans);
+  font-size: var(--font-size-xs);
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  opacity: 0;
+  transition: opacity 120ms ease-out;
+  /* Sit above the .trackBody so its pointer events take precedence
+     when both render at the same tile corner. */
+  z-index: 2;
+}
+
+.trackCard:hover .removeButton,
+.removeButton:focus-visible {
+  opacity: 1;
+}
+
+.removeButtonConfirming {
+  /* Always visible while confirming, regardless of hover. Subtle-gray
+     border to match the delete-playlist confirm convention. */
+  opacity: 1;
+  color: var(--fg-subtle);
+  border-color: var(--fg-subtle);
+}
+
+.trackCardConfirming .trackBody {
+  /* While the × is in confirm state, dim the body to signal that
+     clicking elsewhere on the tile is now inert (the only active
+     affordance is the confirm button itself). */
+  color: var(--fg-muted);
+  cursor: default;
+}
+
+/*
+ * Drag handle — anchored to the top-LEFT of the artwork,
+ * mirroring the × button's top-right anchor. Same visibility pattern:
+ * hidden at rest, revealed on tile hover (or keyboard focus). Cursor
+ * states convey grab-vs-grabbing; dnd-kit's KeyboardSensor handles
+ * focus-based reorder out of the box.
+ *
+ * The icon is a 16x16 six-dot grip from Icon.tsx (DragHandleIcon).
+ * The wrapping button is sized to a 24x24 hit target to match the ×
+ * button visually and to give the pointer a reasonable target.
+ */
+.dragHandle {
+  position: absolute;
+  inset-block-start: var(--space-2);
+  inset-inline-start: var(--space-2);
+  inline-size: 24px;
+  block-size: 24px;
+  border: var(--stroke);
+  border-radius: var(--radius-pill);
+  background: var(--bg);
+  color: var(--fg);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  cursor: grab;
+  opacity: 0;
+  transition: opacity 120ms ease-out;
+  /* Same stacking concern as .removeButton — own the corner above
+     the body button so pointer events route here, not to body. */
+  z-index: 2;
+  /* Disable browser touch gesture interception so dnd-kit's
+     PointerSensor receives a clean stream of pointer events.
+     Without this, mobile/trackpad gestures can interpret the drag
+     as a scroll and never deliver pointermove to React. */
+  touch-action: none;
+}
+
+.trackCard:hover .dragHandle,
+.dragHandle:focus-visible {
+  opacity: 1;
+}
+
+.dragHandleActive,
+.dragHandle:active {
+  cursor: grabbing;
+}
+
+/*
+ * Dragging state on the tile root. dnd-kit applies its own transform
+ * via inline style; we layer a subtle visual hint (already applied
+ * via inline opacity in SortablePlaylistTile.tsx — kept there because
+ * it's a runtime value tied to isDragging from useSortable). This
+ * class is a placeholder for any future drag-visual that should be
+ * a static style rather than an inline one (e.g., outline).
+ */
+.trackCardDragging {
+  /* No effect at rest — reserved hook. Inline opacity already
+     dims the source tile during drag. */
+}
+
+/*
+ * Inline reorder error — rendered above the tile row
+ * when the playlist-store's `reorderError` matches this page's id.
+ * Auto-clears via the store's internal timer (REORDER_ERROR_LINGER_MS).
+ * Uses the muted-gray token to match the rest of the monochrome
+ * helper text; the role="alert" on the element handles a11y
+ * notification.
+ */
+.reorderError {
+  font-family: var(--font-sans);
+  font-size: var(--font-size-sm);
+  color: var(--fg-muted);
+  letter-spacing: 0.05em;
+  margin: 0;
+  padding-block-end: var(--space-2);
+}

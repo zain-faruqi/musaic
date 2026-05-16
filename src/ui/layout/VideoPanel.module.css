@@ -1,0 +1,148 @@
+/*
+ * VideoPanel — always mounted in AppShell between TopBar and the
+ * scrollable content. Visually collapses when the current adapter
+ * has no visual element; expands when it does.
+ *
+ * Container-vs-panel sizing rule (load-bearing for YouTube):
+ *
+ *   The YouTube IFrame Player API requires its iframe to be at least
+ *   200×200 to enter the PLAYING state, and Chromium throttles the
+ *   rendering pipeline of cross-origin iframes that are clipped to
+ *   zero visible area by their ancestors. The container carries the
+ *   size floor as `min-block-size`; this file is structured so the
+ *   iframe is ALWAYS positioned somewhere inside the viewport with
+ *   real dimensions, even when the user is on a non-YouTube source.
+ *
+ *   Pre-3b-correction design: `.panel { overflow: hidden }` plus
+ *   `.collapsed { block-size: 0 }` clipped the (270px-tall) container
+ *   out of view. That satisfied the IFrame Player API's own 200×200
+ *   bounding-rect check, but the iframe inside a zero-visible-area
+ *   ancestor got render-throttled by Chromium — priming stalled,
+ *   load() returned with a warning, and on cross-source handoff the
+ *   video frame stayed black while audio played.
+ *
+ *   An earlier design (rolled back): the collapsed panel used
+ *   `position: fixed` to render the iframe in a 200×200
+ *   invisible square at the bottom-right corner. The position:fixed
+ *   removed the panel from grid flow entirely — and CSS Grid does
+ *   not auto-place position:fixed/absolute items, so AppShell's
+ *   `grid-template-rows: auto auto 1fr auto` ended up auto-placing
+ *   only three items (TopBar / content / NowPlayingBar) into rows
+ *   1/2/3, which made NowPlayingBar land in the `1fr` row and fill
+ *   the viewport with its contents vertical-centered. Visible bug:
+ *   "now-playing bar floating in the middle of the screen."
+ *
+ *   Current design: keep the panel IN the grid (so the layout is
+ *   unchanged), keep `block-size: 0` on `.collapsed`, but DROP
+ *   `overflow: hidden` from `.panel`. The container inside is
+ *   `min-block-size: 270px` and overflows the 0-height panel into
+ *   the content area below; the iframe lives in viewport coordinates
+ *   with a real bounding rect, so Chromium doesn't throttle it.
+ *   Visibility of the iframe is controlled by `opacity: 0` on the
+ *   container in the collapsed state (paint-only, doesn't affect
+ *   layout). `pointer-events: none` on the container AND on the
+ *   iframe rule keeps the (invisible) iframe from intercepting
+ *   hover/click against the content underneath.
+ *
+ *   Trade-off: the iframe geometrically overlaps the top ~270px of
+ *   the content area when collapsed. With opacity:0 + pointer-events:
+ *   none this is invisible and click-transparent, so the user
+ *   doesn't notice; it just satisfies Chromium's "this iframe is
+ *   on-screen" check for the throttle.
+ *
+ *   The container's DOM identity must stay stable across track
+ *   changes — reparenting a live `<iframe>` reloads its content.
+ *   The CSS rule swap (.collapsed ↔ .expanded) is paint/layout only;
+ *   the React tree never re-mounts the container or the iframe.
+ */
+
+.panel {
+  /* Hard rule: do not re-create on visibility flips. The collapse is
+     CSS only — class swap only, no `display: none`, no React
+     conditional render.
+
+     Intentionally NO `overflow: hidden` here. See the file header for
+     why: if the panel clips the container, the iframe ends up with
+     zero visible-area intersection with viewport and Chromium throttles
+     its render pipeline. */
+  inline-size: 100%;
+  background: var(--bg);
+  /* The expand/collapse animation is cheap and disappears at 0ms if
+     the user prefers reduced motion (no transition property declared
+     on the collapsed variant, so the toggle is a frame-snap). */
+  transition: block-size 150ms ease;
+}
+
+.collapsed {
+  block-size: 0;
+  border-block-end: none;
+}
+
+/*
+ * Collapsed-state container: invisible but laid out with real
+ * dimensions. The container's `min-block-size: 270px` (declared on
+ * `.container` below) overflows the panel's 0-height row; the
+ * opacity:0 here hides it, pointer-events:none keeps it from
+ * intercepting hover/click on the content underneath.
+ */
+.collapsed > .container {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.expanded {
+  /* Cap the panel at a comfortable share of the viewport. */
+  block-size: 45vh;
+  border-block-end: var(--stroke);
+}
+
+.container {
+  /* Always sized so an embedded YT iframe is over the IFrame Player
+     API's 200×200 minimum. 270px is conservative — accounts for
+     browser-side rounding and a Chromium quirk where very-near-the-
+     floor iframes still misbehave.
+
+     When the panel is collapsed (`block-size: 0`), the container
+     overflows the panel by 270px into the content area below. The
+     panel intentionally does NOT have `overflow: hidden` (see the
+     file header); visibility of the overflowing container is
+     controlled by the opacity:0 rule on `.collapsed > .container`. */
+  inline-size: 100%;
+  block-size: 100%;
+  min-block-size: 270px;
+  background: var(--bg);
+  /* Smooth the opacity flip when transitioning collapsed ↔ expanded
+     (matches the panel's block-size transition pace). */
+  transition: opacity 150ms ease;
+}
+
+/*
+ * Embedded children (the YT iframe inserted by the IFrame Player API,
+ * or LocalAdapter's <video>) should fill the container.
+ */
+.container > :global(iframe),
+.container > :global(video),
+.container > :global(div) {
+  inline-size: 100%;
+  block-size: 100%;
+  /* Floor matches `.container` — the iframe itself has to clear 200px
+     or YT refuses to play. Belt + braces in case the iframe gets
+     explicit dimensions from the SDK that a percent value resolves
+     against. */
+  min-block-size: 270px;
+  border: none;
+  display: block;
+}
+
+/*
+ * In the collapsed state, the iframe is geometrically over the
+ * content area (invisible via the container's opacity:0). Make sure
+ * the iframe itself doesn't capture pointer events from clicks
+ * intended for the content underneath — pointer-events is not
+ * inherited from the container, so we set it explicitly here.
+ */
+.collapsed > .container > :global(iframe),
+.collapsed > .container > :global(video),
+.collapsed > .container > :global(div) {
+  pointer-events: none;
+}

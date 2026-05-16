@@ -1,0 +1,277 @@
+/*
+ * AddTracksToPlaylistPage layout.
+ *
+ *   - Header row: back button, name + "Add tracks" subhead, Cancel pill.
+ *   - Horizontal rule separator (matches HomePage / PlaylistDetailPage).
+ *   - Body: a wrapping grid of pickable tiles (NOT the horizontal
+ *     scroll-snap row used elsewhere — picker is a list-view, the user
+ *     wants to scan the whole library to pick).
+ *   - Sticky footer: a single "Add N tracks" pill.
+ *
+ * Stroke-only, monochrome, same token vocabulary as the rest of the UI.
+ */
+
+.page {
+  padding-block: var(--space-4) calc(var(--space-5) + var(--space-4));
+  padding-inline: var(--space-4);
+  /* Reserve bottom space for the sticky footer so the grid doesn't get
+     clipped behind it on short pages. */
+}
+
+.headerRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
+.headerText {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-inline-size: 0;
+}
+
+.title {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  color: var(--fg);
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.subhead {
+  font-size: var(--font-size-xs);
+  letter-spacing: 0.05em;
+  color: var(--fg-muted);
+  text-transform: lowercase;
+}
+
+.cancelButton,
+.cancelInline {
+  border: var(--stroke);
+  border-radius: var(--radius-pill);
+  padding: var(--space-1) var(--space-3);
+  background: transparent;
+  color: var(--fg);
+  font-family: var(--font-sans);
+  font-size: var(--font-size-xs);
+  letter-spacing: 0.05em;
+  cursor: pointer;
+}
+
+.cancelButton:hover,
+.cancelInline:hover {
+  color: var(--fg-muted);
+  border-color: var(--fg-muted);
+}
+
+.cancelInline {
+  /* Push the explicit Cancel to the right edge; the back button on
+     the left already lets users navigate, but having "Cancel" labeled
+     near the action area matches the picker UX convention. */
+  margin-inline-start: auto;
+}
+
+.rule {
+  border: none;
+  border-block-start: var(--stroke);
+  margin-block-start: var(--space-3);
+  margin-block-end: var(--space-3);
+}
+
+.helper {
+  font-family: var(--font-sans);
+  font-size: var(--font-size-sm);
+  color: var(--fg-muted);
+  letter-spacing: 0.05em;
+  margin: 0;
+  padding-block: var(--space-4);
+}
+
+/*
+ * Paste-to-add row.
+ *
+ * The two URL pills (`<YouTubeUrlInput />` + `<SpotifyUrlInput />`)
+ * stack vertically above the grid, with a thin inline message line
+ * underneath that surfaces the paste outcome ("Added N to selection.
+ * M already in this playlist."). Same monochrome stroke-only language
+ * as the rest of the picker — no new color tokens, no accent.
+ */
+.pasteRow {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding-block-end: var(--space-3);
+}
+
+.pasteMessage {
+  font-family: var(--font-sans);
+  font-size: var(--font-size-xs);
+  color: var(--fg-muted);
+  letter-spacing: 0.05em;
+  /* Keep the line in flow but visually tied to the pills above it.
+     Matches the spacing rhythm the pills' own message uses. */
+  padding-block-start: var(--space-1);
+}
+
+.banner {
+  border: var(--stroke);
+  border-color: var(--fg-muted);
+  border-radius: 0;
+  padding: var(--space-2) var(--space-3);
+  margin-block-end: var(--space-3);
+  font-size: var(--font-size-sm);
+  color: var(--fg);
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
+.bannerButton {
+  border: var(--stroke);
+  border-radius: var(--radius-pill);
+  padding: var(--space-1) var(--space-3);
+  background: transparent;
+  color: var(--fg);
+  font-family: var(--font-sans);
+  font-size: var(--font-size-xs);
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  margin-inline-start: auto;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: var(--space-3);
+  padding-block-end: var(--space-3);
+}
+
+.tileCard {
+  /* Reset button defaults; this whole thing is the click target. */
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  background: transparent;
+  border: none;
+  padding: 0;
+  text-align: start;
+  color: var(--fg);
+  cursor: pointer;
+  font-family: var(--font-sans);
+  min-inline-size: 0;
+}
+
+.tileCard:hover {
+  color: var(--fg-muted);
+}
+
+.tileCard:focus-visible {
+  outline: var(--stroke);
+  outline-offset: var(--space-1);
+}
+
+.tileCardSelected {
+  /* Selected state is signalled by the checkbox indicator on the
+     artwork corner. We don't tint the whole card — palette is
+     monochrome and we want the tile contents readable. */
+  color: var(--fg);
+}
+
+.tileArt {
+  position: relative;
+  display: inline-block;
+  inline-size: 160px;
+  block-size: 160px;
+}
+
+.checkbox {
+  position: absolute;
+  inset-block-start: var(--space-2);
+  inset-inline-end: var(--space-2);
+  inline-size: 20px;
+  block-size: 20px;
+  border: var(--stroke);
+  background: var(--bg);
+  color: var(--fg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--font-size-sm);
+  line-height: 1;
+  pointer-events: none;
+  /* The checkbox is a visual indicator on top of the tile; the tile
+     button captures the click. `pointer-events: none` keeps the
+     hit-target singular. */
+}
+
+.checkboxSelected {
+  background: var(--fg);
+  color: var(--bg);
+}
+
+.tileMeta {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-inline-size: 0;
+  inline-size: 100%;
+}
+
+.tileTitle {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  color: inherit;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tileSubtitle {
+  font-size: var(--font-size-xs);
+  color: var(--fg-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.footer {
+  position: sticky;
+  inset-block-end: 0;
+  background: var(--bg);
+  padding-block: var(--space-3);
+  display: flex;
+  justify-content: flex-end;
+  /* Hairline above the footer so it reads as a sticky bar over the
+     scrolling grid below it. */
+  border-block-start: var(--stroke);
+  margin-block-start: var(--space-3);
+}
+
+.confirmButton {
+  border: var(--stroke);
+  border-radius: var(--radius-pill);
+  padding: var(--space-2) var(--space-4);
+  background: transparent;
+  color: var(--fg);
+  font-family: var(--font-sans);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: 0.05em;
+  cursor: pointer;
+}
+
+.confirmButton:hover:not(:disabled) {
+  color: var(--fg-muted);
+  border-color: var(--fg-muted);
+}
+
+.confirmButton:disabled {
+  color: var(--fg-subtle);
+  border-color: var(--fg-subtle);
+  cursor: default;
+}

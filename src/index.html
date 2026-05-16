@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <!--
+      Referrer policy. Sets the referrer policy used when the renderer
+      requests cross-origin resources (notably the YouTube IFrame Player,
+      which validates the embedding host against its embed-permissions
+      database and rejects requests it can't attribute). Under the
+      packaged-build embedded localhost server origin
+      (`http://localhost:<port>`) we send a same-origin-class Referer
+      that YT accepts; under the dev vite server we send the localhost
+      origin the same way. Specifying the policy explicitly is
+      documented best practice — defaults vary across Chromium
+      versions and shouldn't be relied on. Paired with the
+      youtube-nocookie host switch in
+      src/adapters/youtube/youtube-adapter.ts.
+    -->
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+    <!--
+      Content Security Policy.
+      For YouTube playback: allow the IFrame Player API script
+      from www.youtube.com and the embedded iframe from both
+      www.youtube.com and www.youtube-nocookie.com.
+
+      For YouTube paste-and-save: YouTube thumbnails live on
+      `*.ytimg.com` (i.ytimg.com is the primary; i1..i9.ytimg.com are
+      shard variants). `img-src` is narrowed to *.ytimg.com rather
+      than a blanket `https:` — defense in depth. New remote-image
+      sources land here, explicitly, when a slice introduces them.
+
+      `'self'` resolves to:
+        - Dev:      http://localhost:<vite-port>     (vite dev server)
+        - Packaged: http://localhost:<auto-port>     (embedded HTTP server,
+                                                     bound to 127.0.0.1)
+      Same scheme (http://) in both modes; same host string
+      (`localhost`); different OS-assigned ports per launch.
+
+      `musaic-file:` is a separate custom protocol main serves
+      arbitrary local audio/video files through; allowed for
+      media-src so the renderer's <audio>/<video> can fetch from it.
+
+      `'unsafe-inline'` for `style-src` matches what vite's HMR
+      injects in dev; the security boundary that matters in Electron
+      is contextIsolation + nodeIntegration: false (both still set
+      in electron/main/index.ts), not inline styles. Tighten when we
+      ship a production build path that doesn't need it.
+
+      Spotify: The Web Playback SDK loads from
+      sdk.scdn.co; the SDK's iframe renders from the same host and
+      handles the encrypted media stream. Album artwork (saved-row
+      thumbnails on tiles, NowPlayingBar artwork) lives on
+      `i.scdn.co` and shards — covered by the `*.scdn.co` patterns
+      under img-src and media-src.
+
+      Auth-and-token calls go to accounts.spotify.com (PKCE handled
+      in main; this directive is for any future renderer-side
+      account UI). Web API calls — `GET /v1/tracks/{id}` for the
+      save flow's metadata fetch, `PUT /me/player/play` for the
+      adapter's playback start — go to api.spotify.com.
+      spclient.wg.spotify.com and dealer.spotify.com are the SDK's
+      own control channels (HTTP and WebSocket respectively),
+      confirmed used in observed SDK network traces. The Widevine
+      license endpoint also lives under api.spotify.com and is
+      covered by the same entry.
+
+      Audit verdict: no directive changes needed beyond what's
+      below. Every endpoint the Spotify save flow + adapter touches
+      is already admitted.
+    -->
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="
+        default-src 'self';
+        script-src 'self' https://www.youtube.com https://s.ytimg.com https://sdk.scdn.co;
+        style-src 'self' 'unsafe-inline';
+        img-src 'self' data: blob: https://*.ytimg.com https://*.scdn.co musaic-file:;
+        media-src 'self' blob: https://*.scdn.co musaic-file:;
+        frame-src https://www.youtube.com https://www.youtube-nocookie.com https://sdk.scdn.co;
+        connect-src 'self' https://www.youtube.com https://accounts.spotify.com https://api.spotify.com https://spclient.wg.spotify.com wss://dealer.spotify.com;
+      "
+    />
+    <title>Musaic</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="./renderer.tsx"></script>
+  </body>
+</html>

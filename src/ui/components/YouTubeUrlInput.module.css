@@ -1,0 +1,80 @@
+/*
+ * YouTubeUrlInput — pill input + play button.
+ *
+ * Visual language matches the existing `open file` pill on HomePage
+ * (same pill radius, same stroke-only treatment). The input lives in
+ * a pill container; the play button is a smaller pill sitting beside
+ * it. Error text appears inline below.
+ *
+ * No accent color in v1: the error state uses the `--fg-muted` token
+ * and a slight border thickening rather than a red. The monochrome
+ * reservation holds.
+ */
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+  flex-shrink: 0;
+}
+
+.input {
+  /* Pill-shaped, stroke-only, matches the empty-state pick button
+     styling on HomePage. */
+  border: var(--stroke);
+  border-radius: var(--radius-pill);
+  padding: var(--space-1) var(--space-3);
+  background: transparent;
+  color: var(--fg);
+  font-family: var(--font-sans);
+  font-size: var(--font-size-xs);
+  letter-spacing: 0.05em;
+  inline-size: 240px;
+  outline: none;
+}
+
+.input::placeholder {
+  color: var(--fg-muted);
+}
+
+.input:focus {
+  border-color: var(--fg);
+}
+
+.inputError {
+  /* Monochrome error treatment: switch the stroke to the subtle gray
+     so it reads as "something off" without breaking the palette
+     reservation. --accent stays unused. */
+  border-color: var(--fg-muted);
+}
+
+.actionButton {
+  border: var(--stroke);
+  border-radius: var(--radius-pill);
+  padding: var(--space-1) var(--space-3);
+  background: transparent;
+  color: var(--fg);
+  font-family: var(--font-sans);
+  font-size: var(--font-size-xs);
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.actionButton:hover:not(:disabled) {
+  color: var(--fg-muted);
+  border-color: var(--fg-muted);
+}
+
+.actionButton:disabled {
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+
+.message {
+  font-family: var(--font-sans);
+  font-size: var(--font-size-xs);
+  color: var(--fg-muted);
+  letter-spacing: 0.05em;
+}

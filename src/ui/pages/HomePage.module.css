@@ -1,0 +1,181 @@
+/*
+ * HomePage layout. Two visual modes:
+ *   1. Empty (loading or no tracks) — centered ring motif + helper.
+ *   2. Populated — scrollable page with one or more "/" sections,
+ *      each containing a horizontal row of tile cards.
+ *
+ * The horizontal row uses scroll-snap so trackpad swipes settle on
+ * tile boundaries — cheap polish, no JS.
+ */
+
+/* --- empty state (shared by loading + zero-tracks) --- */
+
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  block-size: 100%;
+  padding: var(--space-5);
+  gap: var(--space-4);
+}
+
+.helper {
+  margin: 0;
+  font-size: var(--font-size-sm);
+  color: var(--fg-muted);
+  letter-spacing: 0.05em;
+}
+
+.pickButton {
+  border: var(--stroke);
+  border-radius: var(--radius-pill);
+  padding: var(--space-2) var(--space-4);
+  background: transparent;
+  color: var(--fg);
+  font-family: var(--font-sans);
+  font-size: var(--font-size-sm);
+  letter-spacing: 0.05em;
+  cursor: pointer;
+}
+
+.pickButton:hover {
+  color: var(--fg-muted);
+  border-color: var(--fg-muted);
+}
+
+/* --- populated view --- */
+
+.page {
+  padding-block: var(--space-4);
+  padding-inline: var(--space-4);
+}
+
+.section {
+  margin-block-end: var(--space-5);
+}
+
+.sectionHeader {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin-block-end: var(--space-3);
+  padding-block-end: var(--space-2);
+  border-block-end: var(--stroke);
+}
+
+/*
+ * Right-side cluster of header affordances — currently the YouTube
+ * URL input + the "open file" pill. Wraps on narrow widths so neither
+ * piece gets clipped.
+ */
+.sectionActions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
+.sectionTitle {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  color: var(--fg);
+  letter-spacing: 0.02em;
+}
+
+/*
+ * The inline pick button — same visual language as the empty-state
+ * pill, sized down to live in the section header without dominating.
+ * Stays available as the "add a one-off file outside the folder"
+ * fallback.
+ */
+.pickButtonInline {
+  border: var(--stroke);
+  border-radius: var(--radius-pill);
+  padding: var(--space-1) var(--space-3);
+  background: transparent;
+  color: var(--fg);
+  font-family: var(--font-sans);
+  font-size: var(--font-size-xs);
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.pickButtonInline:hover {
+  color: var(--fg-muted);
+  border-color: var(--fg-muted);
+}
+
+.row {
+  display: flex;
+  gap: var(--space-3);
+  overflow-x: auto;
+  scroll-snap-type: inline mandatory;
+  padding-block-end: var(--space-2);
+}
+
+/* Hide the scrollbar — the row signals overflow through clipped
+   tiles at the trailing edge, which fits the wireframe-ish aesthetic
+   better than a chrome scrollbar. */
+.row::-webkit-scrollbar {
+  display: none;
+}
+
+/*
+ * Each tile card: Tile component on top, two lines of text below.
+ * `flex-shrink: 0` so the children don't compress when the row
+ * overflows; intrinsic width matches the Tile size set in JS.
+ */
+.tileCard {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: 0;
+  background: transparent;
+  border: none;
+  color: var(--fg);
+  font-family: var(--font-sans);
+  text-align: start;
+  cursor: pointer;
+  flex-shrink: 0;
+  inline-size: 160px;
+  scroll-snap-align: start;
+}
+
+.tileCard:hover .tileTitle {
+  color: var(--fg-muted);
+}
+
+.tileCard:focus-visible {
+  outline: var(--stroke);
+  outline-offset: var(--space-1);
+}
+
+.tileMeta {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-inline-size: 0;
+  inline-size: 100%;
+}
+
+.tileTitle {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  color: var(--fg);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tileSubtitle {
+  font-size: var(--font-size-xs);
+  color: var(--fg-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

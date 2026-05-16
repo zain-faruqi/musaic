@@ -1,0 +1,83 @@
+# electron-builder configuration. Kept in a separate YAML rather than
+# under a "build" key in package.json so the manifest stays small and
+# diffs for packaging changes don't churn the dependency list.
+#
+# Output goes to dist/ (electron-builder's default). The JS build step
+# (electron-vite) writes to out/, which this config consumes via the
+# `files:` array — the two are distinct directories on purpose.
+#
+# for the rationale on the choices encoded here.
+
+# Personal-use bundle identifier. If we ever enroll in the Apple
+# Developer Program, the identifier may need to match the App ID set
+# up there; rename then.
+appId: com.musaic.app
+productName: Musaic
+
+# Where electron-builder downloads the Electron framework binary
+# from at packaging time. By default @electron/get pulls from
+# https://github.com/electron/electron/releases/... — the UPSTREAM
+# electron repo, which has no `+wvcus` builds; the result is a 404
+# for our pinned version. Castlabs publishes their releases under
+# the same filename scheme at github.com/castlabs/electron-releases.
+#
+# IMPORTANT: do NOT add a trailing `v` to this URL. @electron/get
+# composes the download as `{mirror}{customDir}/{filename}` and
+# electron-builder 26.x's integration passes customDir as the
+# v-prefixed version (`v42.0.0+wvcus`). A trailing `v` in the mirror
+# produces `.../download/vv42.0.0+wvcus/...` (double-v) and 404s —
+# the exact failure mode hit in the user's first packaged-build
+# attempt. Older community examples (electron-builder v22 era, when
+# the app-builder Go downloader was in use and customDir was the
+# bare version) prescribed the trailing v; that advice is now
+# stale.
+#
+# Note: this is orthogonal to `node_modules/electron/dist/` — that's
+# what dev mode (`npm run dev`) uses and is populated by castlabs's
+# own install.js. electron-builder doesn't reuse it; it always
+# fetches its own copy for the packaged bundle.
+electronDownload:
+  mirror: https://github.com/castlabs/electron-releases/releases/download/
+
+# Files included in the packaged .app. Order matters for clarity, not
+# semantics — electron-builder unions these patterns. We need:
+#   - out/{main,preload,renderer}/**       — the JS build output
+#   - package.json                          — Electron's main-process
+#                                             entry point lives here
+#   - node_modules/**                       — runtime deps
+# Defaults already include node_modules; listing it explicitly so the
+# requirement is obvious to anyone reading this file.
+files:
+  - 'out/**'
+  - 'package.json'
+  - 'node_modules/**'
+
+mac:
+  # Disable macOS code signing. We don't have a Developer ID cert and
+  # won't until M3. The user will need to right-click → Open the first
+  # time they launch the .app to bypass Gatekeeper's quarantine prompt.
+  # Note: this is orthogonal to the VMP signature applied by the
+  # afterPack hook below — VMP is Widevine's, macOS code signing is
+  # Apple's.
+  identity: null
+  target:
+    - dmg
+  # Category required by Apple for some macOS surfaces; chosen to
+  # match the product's nature without committing to App Store
+  # taxonomy (we don't ship there). Safe default.
+  category: public.app-category.music
+
+# afterPack runs once per platform target after electron-builder has
+# laid out the .app bundle but before DMG creation. This is the
+# canonical place for VMP signing on macOS — castlabs's EVS wiki
+# specifies that VMP signing must happen BEFORE macOS code signing
+# (which we're skipping anyway in this slice). The hook is plain JS
+# CommonJS — electron-builder lifecycle hooks load directly from
+# disk and don't run through the project's tsconfig.
+afterPack: ./scripts/sign-vmp.cjs
+
+# ASAR packaging. We've seen no Widevine-vs-ASAR concern; the
+# framework binary that hosts the
+# CDM lives outside the .asar archive (`Contents/Frameworks/`), so
+# bundling the JS into ASAR is safe.
+asar: true

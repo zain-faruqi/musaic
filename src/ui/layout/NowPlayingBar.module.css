@@ -1,0 +1,115 @@
+.bar {
+  display: grid;
+  grid-template-columns: minmax(220px, 1fr) minmax(360px, 2fr) minmax(120px, 1fr);
+  align-items: center;
+  block-size: 96px;
+  padding-inline: var(--space-3);
+  border-block-start: var(--stroke);
+  background: var(--bg);
+  gap: var(--space-3);
+}
+
+.left {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-inline-size: 0;
+}
+
+.text {
+  flex: 1 1 auto;
+  min-inline-size: 0;
+}
+
+.title {
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-bold);
+  color: var(--fg);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.subtitle {
+  font-size: var(--font-size-sm);
+  color: var(--fg-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-block-start: 2px;
+}
+
+.center {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--space-1);
+  min-inline-size: 0;
+}
+
+.transportRow {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.scrubRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.scrubRow > :global(.scrubber),
+.scrubRow > div[role='slider'] {
+  flex: 1 1 auto;
+}
+
+.right {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+/* Error affordance — replaces transport+scrubber when playbackError
+   is set. Stroke-first treatment, monochrome (--accent stays reserved). */
+.errorRow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+  inline-size: 100%;
+}
+
+.errorMessage {
+  font-family: var(--font-sans);
+  font-size: var(--font-size-sm);
+  color: var(--fg-muted);
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-inline-size: 0;
+}
+
+.errorButton {
+  border: var(--stroke);
+  border-radius: var(--radius-pill);
+  padding: var(--space-1) var(--space-3);
+  background: transparent;
+  color: var(--fg);
+  font-family: var(--font-sans);
+  font-size: var(--font-size-xs);
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.errorButton:hover:not(:disabled) {
+  color: var(--fg-muted);
+  border-color: var(--fg-muted);
+}
+
+.errorButton:disabled {
+  cursor: not-allowed;
+  opacity: 0.4;
+}

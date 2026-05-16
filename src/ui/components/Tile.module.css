@@ -1,0 +1,17 @@
+.tile {
+  flex-shrink: 0;
+  border: var(--stroke);
+  background: var(--bg);
+  border-radius: var(--radius-tile);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.tile > img {
+  inline-size: 100%;
+  block-size: 100%;
+  object-fit: cover;
+  display: block;
+}

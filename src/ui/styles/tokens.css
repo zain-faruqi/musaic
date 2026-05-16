@@ -1,0 +1,40 @@
+/*
+ * Design tokens. The single source of truth for color, type, and shape.
+ * Hardcoded literals (#fff, rgb(), `13px` for type) anywhere in src/ui/
+ * are a review-blocker.
+ */
+:root {
+  --bg: #000000;          /* app background */
+  --fg: #FFFFFF;          /* primary text, strokes, icons */
+  --fg-muted: #A7A5A5;    /* secondary text: dates, subtitles, helpers */
+  --fg-subtle: #D9D9D9;   /* tertiary, placeholder fills */
+
+  /* Reserved. Do not consume in v1. The palette is monochrome.
+     When a future version introduces a single accent (e.g. active
+     source badge, scrub progress), set this once here and use it
+     nowhere else. */
+  --accent: unset;
+
+  --stroke: 1px solid var(--fg);
+  --radius-pill: 9999px;   /* search bar, filter chips, primary buttons */
+  --radius-tile: 0;        /* album/video tiles are square */
+
+  --font-sans: 'Inter', system-ui, sans-serif;
+
+  /* Spacing scale — pick from these, don't sprinkle magic numbers. */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 16px;
+  --space-4: 24px;
+  --space-5: 40px;
+
+  /* Typography scale — same rule as spacing. */
+  --font-size-xs: 11px;    /* source badges, dates */
+  --font-size-sm: 13px;    /* helper text, muted subtitles */
+  --font-size-base: 15px;  /* body */
+  --font-size-md: 18px;    /* now-playing title */
+  --font-size-lg: 22px;    /* wordmark, section headers */
+
+  --font-weight-regular: 400;
+  --font-weight-bold: 700;
+}

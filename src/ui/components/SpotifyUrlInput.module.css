@@ -1,0 +1,76 @@
+/*
+ * SpotifyUrlInput — pill input + add button.
+ *
+ * Same visual language as YouTubeUrlInput (which is itself the same
+ * pill language as the `open file` button on HomePage). The two are
+ * intentionally indistinguishable in styling — they're two paste-and-
+ * save controls of the same kind. Only the placeholder copy differs.
+ *
+ * No accent color in v1: the error state uses the `--fg-muted` token
+ * and a slight border thickening. See YouTubeUrlInput.module.css for
+ * the full rationale; this file mirrors it exactly so future
+ * theme-token edits affect both consistently.
+ */
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+  flex-shrink: 0;
+}
+
+.input {
+  border: var(--stroke);
+  border-radius: var(--radius-pill);
+  padding: var(--space-1) var(--space-3);
+  background: transparent;
+  color: var(--fg);
+  font-family: var(--font-sans);
+  font-size: var(--font-size-xs);
+  letter-spacing: 0.05em;
+  inline-size: 240px;
+  outline: none;
+}
+
+.input::placeholder {
+  color: var(--fg-muted);
+}
+
+.input:focus {
+  border-color: var(--fg);
+}
+
+.inputError {
+  border-color: var(--fg-muted);
+}
+
+.actionButton {
+  border: var(--stroke);
+  border-radius: var(--radius-pill);
+  padding: var(--space-1) var(--space-3);
+  background: transparent;
+  color: var(--fg);
+  font-family: var(--font-sans);
+  font-size: var(--font-size-xs);
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.actionButton:hover:not(:disabled) {
+  color: var(--fg-muted);
+  border-color: var(--fg-muted);
+}
+
+.actionButton:disabled {
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+
+.message {
+  font-family: var(--font-sans);
+  font-size: var(--font-size-xs);
+  color: var(--fg-muted);
+  letter-spacing: 0.05em;
+}

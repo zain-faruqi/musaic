@@ -1,0 +1,18 @@
+.shell {
+  display: grid;
+  /* TopBar (auto) / VideoPanel (auto — collapses to 0 when no visual)
+     / scrollable content (1fr) / NowPlayingBar (auto). VideoPanel sits
+     in its own row so it can expand without pushing the now-playing
+     bar off-screen, and its block-size animation flows the grid
+     naturally without the content area having to reflow. */
+  grid-template-rows: auto auto 1fr auto;
+  block-size: 100vh;
+  background: var(--bg);
+  color: var(--fg);
+  overflow: hidden;
+}
+
+.content {
+  overflow-y: auto;
+  background: var(--bg);
+}

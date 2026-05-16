@@ -1,0 +1,75 @@
+/*
+ * NewPlaylistPill — idle pill button that swaps to an editable
+ * pill input on click. Visual language mirrors YouTubeUrlInput
+ * and the empty-state "open file" pill: stroke-only, pill radius,
+ * letter-spaced, monochrome. No accent colors in v1.
+ */
+
+.idlePill {
+  /* Same stroke-only pill shape as the inline pickButton on
+     HomePage. Sized to match the other section-actions pills so the
+     row reads as a balanced cluster. */
+  border: var(--stroke);
+  border-radius: var(--radius-pill);
+  padding: var(--space-1) var(--space-3);
+  background: transparent;
+  color: var(--fg);
+  font-family: var(--font-sans);
+  font-size: var(--font-size-xs);
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.idlePill:hover {
+  color: var(--fg-muted);
+  border-color: var(--fg-muted);
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+  flex-shrink: 0;
+}
+
+.input {
+  border: var(--stroke);
+  border-radius: var(--radius-pill);
+  padding: var(--space-1) var(--space-3);
+  background: transparent;
+  color: var(--fg);
+  font-family: var(--font-sans);
+  font-size: var(--font-size-xs);
+  letter-spacing: 0.05em;
+  inline-size: 200px;
+  outline: none;
+}
+
+.input::placeholder {
+  color: var(--fg-muted);
+}
+
+.input:focus {
+  border-color: var(--fg);
+}
+
+.inputError {
+  /* Monochrome error treatment, matching YouTubeUrlInput: switch the
+     stroke to the muted gray rather than introducing red. The
+     --accent reservation stays unused. */
+  border-color: var(--fg-muted);
+}
+
+.input:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.message {
+  font-family: var(--font-sans);
+  font-size: var(--font-size-xs);
+  color: var(--fg-muted);
+  letter-spacing: 0.05em;
+}

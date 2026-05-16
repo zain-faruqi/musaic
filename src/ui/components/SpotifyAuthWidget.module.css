@@ -1,0 +1,133 @@
+/*
+ * SpotifyAuthWidget — Spotify pill + connected-account inline
+ * controls, rendered inside the top navbar.
+ *
+ * Lives in the navbar (top bar). Two layout-relevant constraints
+ * apply:
+ *
+ *   1. `flex-wrap: wrap` is dropped — the navbar reserves a fixed
+ *      horizontal slot for this widget and never expects the row to
+ *      wrap. Wrapping in the navbar would push the widget vertically
+ *      and inflate the bar height; instead we let the connected-state
+ *      email label truncate naturally if a user's address is long
+ *      enough to overflow.
+ *
+ *   2. The `errorMessage` `flex-basis: 100%` is dropped — pre-5a it
+ *      forced the message under the button by wrapping; in the
+ *      navbar it would force a full-bar-width wrap that is even
+ *      worse. The error sits inline next to the button; this is
+ *      acceptable because the error message is short (failure
+ *      reason from the store), and the page-level affordance (the
+ *      visible "Connect" pill in error state) communicates the
+ *      problem without needing the message.
+ *
+ * `-webkit-app-region: no-drag` on buttons opts them out of the
+ * navbar's drag region; without it, mousedown on the pill would
+ * initiate a window drag rather than register as a click.
+ *
+ * No accent. Monochrome holds.
+ * Tokens only — no literal colors, sizes, or radii.
+ */
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+/*
+ * Pill button — primary affordance. Identical to .pickButtonInline /
+ * .actionButton elsewhere; duplicated rather than @extended because
+ * CSS Modules don't really support extension and a shared base class
+ * would require lifting to a global, which the styling rules don't
+ * encourage. Keep them aligned by hand.
+ */
+.button {
+  border: var(--stroke);
+  border-radius: var(--radius-pill);
+  padding: var(--space-1) var(--space-3);
+  background: transparent;
+  color: var(--fg);
+  font-family: var(--font-sans);
+  font-size: var(--font-size-xs);
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  flex-shrink: 0;
+  /* Opt out of the navbar's draggable region so clicks register
+     as clicks rather than initiating a window drag. */
+  -webkit-app-region: no-drag;
+}
+
+.button:hover:not(:disabled) {
+  color: var(--fg-muted);
+  border-color: var(--fg-muted);
+}
+
+.button:disabled {
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+
+/*
+ * Connected-state cluster. The connected account label sits left, the
+ * Disconnect text-action sits right. The Disconnect link visually
+ * mirrors the pill's stroke but reads as inline text so it doesn't
+ * compete with the primary Connect affordance.
+ */
+.connectedRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.connectedLabel {
+  font-family: var(--font-sans);
+  font-size: var(--font-size-sm);
+  color: var(--fg);
+  letter-spacing: 0.02em;
+  /* Truncate the email if the user has a very long address. The
+     navbar slot has finite width; growing pushes the rest of the
+     bar's content. */
+  max-width: 22ch;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.disconnectAction {
+  border: none;
+  background: transparent;
+  color: var(--fg-muted);
+  font-family: var(--font-sans);
+  font-size: var(--font-size-xs);
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  padding: 0;
+  /* Underline only on hover/focus — keep the default state flat so
+     it doesn't read as a CTA. */
+  text-decoration: none;
+  -webkit-app-region: no-drag;
+}
+
+.disconnectAction:hover,
+.disconnectAction:focus-visible {
+  color: var(--fg);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+/*
+ * Error message inline with the Connect button. Stays subtle — same
+ * color treatment as the YouTubeUrlInput inline error.
+ *
+ * Pre-5a this had `flex-basis: 100%` to wrap under the button; in
+ * the navbar that would push the row vertically. Inline placement
+ * is acceptable; the message is short and the visible "Connect"
+ * button still communicates failure.
+ */
+.errorMessage {
+  font-family: var(--font-sans);
+  font-size: var(--font-size-xs);
+  color: var(--fg-muted);
+  letter-spacing: 0.05em;
+}

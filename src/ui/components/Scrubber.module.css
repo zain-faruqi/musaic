@@ -1,0 +1,31 @@
+.scrubber {
+  position: relative;
+  inline-size: 100%;
+  /* Visible line is 1px but the hit area extends to 14px for easier
+     pointer interaction. */
+  padding-block: 6px;
+  cursor: pointer;
+  touch-action: none;
+}
+
+.scrubberDisabled {
+  composes: scrubber;
+  cursor: default;
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.track {
+  position: relative;
+  inline-size: 100%;
+  block-size: 1px;
+  background: var(--fg-muted);
+}
+
+.progress {
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline-start: 0;
+  block-size: 100%;
+  background: var(--fg);
+}

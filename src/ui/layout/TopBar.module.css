@@ -1,0 +1,41 @@
+.bar {
+  display: flex;
+  align-items: center;
+  block-size: 48px;
+  padding-inline-start: 84px;  /* clear macOS traffic lights (hiddenInset) */
+  padding-inline-end: var(--space-3);
+  border-block-end: var(--stroke);
+  background: var(--bg);
+  -webkit-app-region: drag;
+  user-select: none;
+}
+
+.wordmark {
+  margin: 0;
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: 0.12em;
+  color: var(--fg);
+}
+
+.spacer {
+  flex: 1 1 auto;
+}
+
+/*
+ * Slot for the Spotify auth widget. The widget's own
+ * module handles its internal layout; this slot is just a flex
+ * container so the navbar can place it consistently across states
+ * (the widget changes width as it switches between Connect /
+ * Connected / Error). Keep the slot's height flexible — the widget
+ * never grows past the navbar's 48px line.
+ *
+ * Apple Music (post-v1) would mount here too as a sibling; the
+ * containing flexbox keeps multiple widgets aligned.
+ */
+.widgetSlot {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+

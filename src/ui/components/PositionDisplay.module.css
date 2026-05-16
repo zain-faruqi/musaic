@@ -1,0 +1,8 @@
+.display {
+  font-size: var(--font-size-xs);
+  color: var(--fg-muted);
+  /* Tabular numerals so the digit width is fixed and the display
+     doesn't shimmy as time advances. */
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
+}

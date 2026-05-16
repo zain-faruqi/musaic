@@ -1,0 +1,64 @@
+/*
+ * PlaylistTile — one tile-card on the HomePage `/ Playlists` row.
+ *
+ * Visual language is identical to the inline TrackTile pattern on
+ * HomePage: stroke-placeholder tile on top, bold title + muted
+ * subtitle below. The whole card is a button so focus and click
+ * target line up.
+ *
+ * Pulled into its own component (rather than inlined inside
+ * HomePage.tsx like TrackTile) because PlaylistDetailPage will
+ * eventually use the same shape (and currently uses an inlined
+ * variant for its track row — to be revisited if tracks-in-detail
+ * gets richer).
+ */
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: 0;
+  background: transparent;
+  border: none;
+  color: var(--fg);
+  font-family: var(--font-sans);
+  text-align: start;
+  cursor: pointer;
+  flex-shrink: 0;
+  inline-size: 160px;
+  scroll-snap-align: start;
+}
+
+.card:hover .title {
+  color: var(--fg-muted);
+}
+
+.card:focus-visible {
+  outline: var(--stroke);
+  outline-offset: var(--space-1);
+}
+
+.meta {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-inline-size: 0;
+  inline-size: 100%;
+}
+
+.title {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  color: var(--fg);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.subtitle {
+  font-size: var(--font-size-xs);
+  color: var(--fg-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
