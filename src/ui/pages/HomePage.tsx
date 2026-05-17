@@ -1,11 +1,13 @@
 import type { ReactElement } from 'react';
 import type { UnifiedTrack } from '@renderer/core/types';
+import { ShuffleIcon } from '../components/Icon';
 import { NewPlaylistPill } from '../components/NewPlaylistPill';
 import { PlaylistTile } from '../components/PlaylistTile';
 import { RingField } from '../components/RingField';
 import { Tile } from '../components/Tile';
 import { YouTubeUrlInput } from '../components/YouTubeUrlInput';
 import { SpotifyUrlInput } from '../components/SpotifyUrlInput';
+import { shuffle } from '@renderer/core/shuffle';
 import { pickAndPlay } from '@renderer/state/library';
 import { useLibraryStore } from '@renderer/state/library-store';
 import { usePlayerStore } from '@renderer/state/player-store';
@@ -95,6 +97,12 @@ export const HomePage = (): ReactElement => {
     setQueue(tracks, { cursor: index, autoplay: true });
   };
 
+  // Shuffle the whole library into a fresh randomized queue and play
+  // from the head. One-shot action — each click re-shuffles.
+  const onShuffleLibrary = (): void => {
+    setQueue(shuffle(tracks), { cursor: 0, autoplay: true });
+  };
+
   return (
     <div className={styles.page}>
       <section className={styles.section}>
@@ -114,7 +122,18 @@ export const HomePage = (): ReactElement => {
       </section>
       <section className={styles.section}>
         <header className={styles.sectionHeader}>
-          <h2 className={styles.sectionTitle}>/ Recently Added</h2>
+          <div className={styles.sectionTitleGroup}>
+            <h2 className={styles.sectionTitle}>/ Recently Added</h2>
+            <button
+              type="button"
+              className={styles.shuffleButton}
+              onClick={onShuffleLibrary}
+              disabled={tracks.length === 0}
+              aria-label="Shuffle library"
+            >
+              <ShuffleIcon width={16} height={16} />
+            </button>
+          </div>
           <div className={styles.sectionActions}>
             <YouTubeUrlInput />
             <SpotifyUrlInput />

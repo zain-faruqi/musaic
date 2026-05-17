@@ -94,6 +94,38 @@
   letter-spacing: 0.05em;
 }
 
+/*
+ * Icon-only shuffle action, sitting immediately after the title.
+ * Square 24×24 hit target — same shape as the `.dragHandle` /
+ * `.removeButton` icon buttons (stroke border, pill radius). Disabled
+ * state greys to the subtle token; the button stays visible.
+ */
+.shuffleButton {
+  inline-size: 24px;
+  block-size: 24px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: var(--stroke);
+  border-radius: var(--radius-pill);
+  background: transparent;
+  color: var(--fg);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.shuffleButton:hover:not(:disabled) {
+  color: var(--fg-muted);
+  border-color: var(--fg-muted);
+}
+
+.shuffleButton:disabled {
+  color: var(--fg-subtle);
+  border-color: var(--fg-subtle);
+  cursor: default;
+}
+
 .addButton,
 .deleteButton {
   border: var(--stroke);

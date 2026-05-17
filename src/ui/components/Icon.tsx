@@ -95,6 +95,22 @@ export const NextIcon = (props: IconProps): ReactElement => (
 );
 
 /**
+ * Shuffle glyph — two arrows that cross, one running up-right and one
+ * down-right, both ending in an arrowhead at the right edge. The
+ * canonical shuffle mark. Uses the `NavIcon` wrapper (24×24, 1.5px
+ * stroke, round caps) like the other nav-scale icons; call sites pass
+ * an explicit `width`/`height` when they need it sized down.
+ */
+export const ShuffleIcon = (props: IconProps): ReactElement => (
+  <NavIcon {...props}>
+    <path d="M3 7h4l10 10h4" />
+    <polyline points="18,14 21,17 18,20" />
+    <path d="M3 17h4l10-10h4" />
+    <polyline points="18,4 21,7 18,10" />
+  </NavIcon>
+);
+
+/**
  * Drag handle for the playlist tile's reorder affordance.
  * Two columns of three dots — the canonical "grip" pattern. Uses
  * `fill="currentColor"` rather than the stroke convention because

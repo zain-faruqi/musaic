@@ -22,10 +22,12 @@ import {
   horizontalListSortingStrategy,
   sortableKeyboardCoordinates,
 } from '@dnd-kit/sortable';
+import { shuffle } from '@renderer/core/shuffle';
 import { toUnifiedTrack } from '@renderer/state/library';
 import { usePlayerStore } from '@renderer/state/player-store';
 import { usePlaylistStore } from '@renderer/state/playlist-store';
 import { useUIStore } from '@renderer/state/ui-store';
+import { ShuffleIcon } from '../components/Icon';
 import { SortablePlaylistTile } from './SortablePlaylistTile';
 import styles from './PlaylistDetailPage.module.css';
 
@@ -144,6 +146,14 @@ export const PlaylistDetailPage = ({
     setQueue(tracks, { cursor: index, autoplay: true });
   };
 
+  // Shuffle the playlist into a fresh randomized queue and play from
+  // the head. Same projection as `onTileClick`, randomized order.
+  // One-shot action — each click re-shuffles.
+  const onShufflePlaylist = (): void => {
+    const tracks = detail.tracks.map((m) => toUnifiedTrack(m.track));
+    setQueue(shuffle(tracks), { cursor: 0, autoplay: true });
+  };
+
   const onRequestRemove = (playlistTrackId: number): void => {
     removeTracks(id, [playlistTrackId]).catch((err: unknown) => {
       console.error(
@@ -196,6 +206,15 @@ export const PlaylistDetailPage = ({
           ← back
         </button>
         <RenameableTitle name={detail.name} onRename={(n) => rename(id, n)} />
+        <button
+          type="button"
+          className={styles.shuffleButton}
+          onClick={onShufflePlaylist}
+          disabled={detail.tracks.length === 0}
+          aria-label="Shuffle playlist"
+        >
+          <ShuffleIcon width={16} height={16} />
+        </button>
         <div className={styles.headerActions}>
           <button
             type="button"
