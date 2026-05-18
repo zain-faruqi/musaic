@@ -14,20 +14,14 @@ Personal Electron app that unifies playback across Spotify, YouTube, and local f
 
 ## 1. Install the castlabs signer (one-time per machine)
 
-Every `npm run package` build automatically VMP-signs the `.app` via an `afterPack` hook that shells out to castlabs's Python CLI. You need that CLI installed and authenticated once.
-
 ```bash
 brew install pipx
 pipx ensurepath          # re-open your shell after this so PATH picks up pipx
 pipx install castlabs-evs
-evs-vmp reauth           # creates / signs into your castlabs account
+evs-account signup         # creates / signs into your castlabs account
 ```
 
-`reauth` walks you through signup if you don't have a castlabs account yet, then caches credentials so future packages don't prompt.
-
-If you previously installed via `pip3 install --user castlabs-evs` that also works — the signing hook falls back to `python3 -m castlabs_evs.vmp`.
-
-see more [castlabs-setup.md](https://github.com/zain-faruqi/musaic/blob/main/docs/castlabs-setup.md)
+`signup` walks you through signup if you don't have a castlabs account yet, then caches credentials so future packages don't prompt.
 
 ## 2. Spotify Developer app
 
@@ -37,7 +31,7 @@ see more [castlabs-setup.md](https://github.com/zain-faruqi/musaic/blob/main/doc
 4. APIs / services: check **Web API** and **Web Playback SDK**
 5. Save, then copy the **Client ID** from the app's settings page
 
-Spotify dev apps in development mode only let allowlisted accounts sign in, so either create your own dev app per above or ask me to add your Spotify account as a user on my existing app.
+Spotify dev apps in development mode only let allow listed accounts sign in, so either create your own dev app per above or ask me to add your Spotify account as a user on my existing app.
 
 ## 3. Clone & install
 
@@ -57,45 +51,23 @@ Create `.env.local` in the repo root:
 VITE_SPOTIFY_CLIENT_ID=<your client id from step 2>
 ```
 
-PKCE flow — no client secret needed.
-
 ## 5. Run
-
-### Dev mode (hot reload, no packaging step)
-
-```bash
-npm run dev
-```
-
-Spotify works in dev because `node_modules/electron/dist/` is already the castlabs fork — no VMP signing needed for the unpackaged binary at this layer.
-
-### Packaged build
 
 ```bash
 npm run package
 ```
 
-This runs `electron-vite build`, then `electron-builder --mac --arm64`, then the castlabs signer (via the `afterPack` hook). The build takes a few minutes; look for `[sign-vmp] OK` in the log to confirm the VMP signing step ran. If you don't see that line, Spotify playback won't work in the packaged app.
+This runs `electron-vite build`, then `electron-builder --mac --arm64`, then the castlabs signer (via the `afterPack` hook). The build takes a few minutes
 
-When it finishes, open `dist/` in Finder — or from the terminal:
+When it finishes:
 
 ```bash
 open dist/Musaic-*-arm64.dmg
 ```
 
-You'll see `Musaic-<version>-arm64.dmg` — double-click it (or use the `open` command above), drag `Musaic.app` to `Applications`, then eject the DMG. Launch from Applications going forward.
-
-**First launch**: macOS will refuse to open the app because the build isn't signed with an Apple Developer cert yet ("Musaic can't be opened because Apple cannot check it for malicious software"). Right-click `Musaic.app` in Applications → **Open** → confirm the dialog. After that one-time bypass, normal double-clicks work.
-
 The packaged-build database lives at `~/Library/Application Support/Musaic/`, separate from the dev database, so the library will look empty on first packaged launch. Local files in `~/Music/Musaic/` will re-index on first run; any saved YouTube tracks need to be re-pasted.
+failure modes
 
-## Common failure modes
-
-- **`evs-vmp: command not found`** — `pipx` PATH isn't set up. Run `pipx ensurepath` and open a new terminal.
-- **`Not authed to EVS`** during `npm run package` — run `evs-vmp reauth`.
-- **Electron framework 404 during package** — transient castlabs release issue; retry. If it persists, check that `electron-builder.yml`'s `electronDownload.mirror` matches the castlabs `electron` version in `package.json`.
-- **Spotify "Invalid redirect URI"** when connecting — the dev-app redirect doesn't match. It has to be exactly `http://127.0.0.1:8765/callback`, no trailing slash, IP literal not `localhost`.
-- **Packaged app launches but Spotify playback fails silently** — VMP signing was skipped or failed. Re-check the build log for the `[sign-vmp]` line; the `.app` won't decrypt Widevine content without it.
 
 ## Filesystem layout
 
